@@ -49,3 +49,14 @@ void mostrarMochila(Lista p){
 
     printf("\n");
 }
+
+int calcularTotalMochila(Lista mochila) {
+    int total = 0;
+
+    while (mochila != NULL) {
+        total += mochila->valor;
+        mochila = mochila->prox;
+    }
+
+    return total;
+}

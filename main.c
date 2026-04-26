@@ -1,26 +1,47 @@
+#include "grafico.h"
+#include "labirinto.h"
 #include "mochila.h"
 #include "pilha.h"
-#include "labirinto.h"
-#include<stdio.h>
+#include "raylib.h"
 
 int main() {
+
     Lista mochila;
-    Pilha caminho;
+    Pilha pilha;
+
     criaMochila(&mochila);
+    criaPilha(&pilha);
 
     lerArquivo("labirinto.txt");
-    mostrarLabirinto();
     procurarPersonagem();
 
-    int r = buscarSaida(px, py, &mochila, &caminho);
+    iniciarJanela(colunas * 32, linhas * 32);
 
+    int terminou = 0;
 
-	if(r == 1) {
-    	printf("Encontrou saida!\n");
-    	salvarCaminho("saida.txt", &caminho);
-	} else {
-    	printf("Nao encontrou saida\n");
+	while (!WindowShouldClose()) {
+
+    	BeginDrawing();
+    	ClearBackground(RAYWHITE);
+
+    	desenharLabirinto();
+    	desenharMochila(mochila);
+		desenharEvento();
+    	
+
+    	if (!terminou) {
+        	terminou = buscarSaida(px, py, &mochila, &pilha);
+        	mostrarMochila(mochila);
+        	
+    	} else if(terminou){
+    		desenharFinalDoJogo();
+		}
+    	
+    	EndDrawing();
+    	
+    	salvarCaminho("saida.txt", &pilha);
 	}
 
+    finalizarJanela();
     return 0;
 }

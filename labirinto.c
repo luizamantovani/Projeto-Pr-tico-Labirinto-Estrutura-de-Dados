@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include "mochila.h"
 #include "pilha.h"
-#include<windows.h>
-
-char lab[40][40];
-int linhas, colunas;
+#include "grafico.h"
+#include "raylib.h"
+#include "labirinto.h"
 
 int visitado[40][40];
+int linhas, colunas;
+char lab[40][40];
+Evento ultimoEvento = NADA;
+int ultimoValor = 0;
 
 int px, py; // posição inicial do jogador
 
@@ -70,26 +73,36 @@ int podeAndar(int x, int y){ //retorna 0 se não pode e 1 se pode
 	return 1;
 }
 
-void processarCelula(int x, int y, Lista *mochila){
-	if(lab[x][y] == 'T'){
-		int valor = rand() % 100 + 1;
+Evento processarCelula(int x, int y, Lista *mochila) {
+
+    if (lab[x][y] == 'T') {
+        int valor = rand() % 100 + 1;
         insereMochila(mochila, valor);
+
+        ultimoValor = valor;
+
         printf("Pegou tesouro: %d\n", valor);
-	}
-	
-	if(lab[x][y] == 'A'){
-		removePrimeiroMochila(mochila, NULL);
-        printf("Caiu em armadilha!\n");
-	}
+        lab[x][y] = ' ';
+
+        return TESOURO;
+    }
+
+    if (lab[x][y] == 'A') {
+
+        if (*mochila != NULL) {
+            removePrimeiroMochila(mochila, NULL);
+            printf("Caiu em armadilha!\n");
+        }
+
+        return ARMADILHA;
+    }
+
+    return NADA;
 }
 
 void mostrarEstado(Lista mochila) {
-    system("cls");
-
     mostrarLabirinto();
     mostrarMochila(mochila);
-
-    Sleep(50);
 }
 
 
@@ -107,11 +120,21 @@ int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
 	}
 	
 	visitado[x][y] = 1;
-	processarCelula(x, y, mochila);
-	lab[x][y] = '.';
+
+	ultimoEvento = processarCelula(x, y, mochila);
+
 	if(lab[x][y] != 'P' && lab[x][y] != 'S')
-    	lab[x][y] = '*';
-	mostrarEstado(*mochila);
+    	lab[x][y] = '.';
+
+
+	BeginDrawing();
+	ClearBackground(RAYWHITE);
+	desenharLabirinto();
+	desenharMochila(*mochila);
+	desenharEvento();
+	EndDrawing();
+
+	WaitTime(0.1);
 	
 	
 	
@@ -122,8 +145,17 @@ int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
     if(buscarSaida(x, y-1, mochila, caminho)) return 1;//para baixo
     if(buscarSaida(x, y+1, mochila, caminho)) return 1;//para cima
     
-    lab[x][y] = ' '; // limpa caminho
-	mostrarEstado(*mochila);
+    if(lab[x][y] != 'P')
+    lab[x][y] = ' ';
+
+	BeginDrawing();
+	ClearBackground(RAYWHITE);
+	desenharLabirinto();
+	desenharMochila(*mochila);
+	desenharEvento();
+	EndDrawing();
+
+	WaitTime(0.1);
 
 	pop(caminho);
     

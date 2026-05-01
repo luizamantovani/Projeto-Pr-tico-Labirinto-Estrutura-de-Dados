@@ -5,6 +5,7 @@
 #include<windows.h>
 
 char lab[40][40];
+char labOriginal[40][40];
 int linhas, colunas;
 
 int visitado[40][40];
@@ -28,6 +29,12 @@ void lerArquivo(char *nomeArquivo) {
         }
         fgetc(arq);
     }
+    
+    for(int i = 0; i < linhas; i++) {
+    	for(int j = 0; j < colunas; j++) {
+        	labOriginal[i][j] = lab[i][j];
+    }
+    }
 
     fclose(arq);
 }
@@ -42,16 +49,18 @@ void mostrarLabirinto() {
     }
 }
 
-void procurarPersonagem() {
+int procurarPersonagem() {
 	int i, j;
     for(i = 0; i < linhas; i++) {
         for(j = 0; j < colunas; j++) {
             if(lab[i][j] == 'P'){
             	px = i;
             	py = j;
+            	return 1;
 			}
         }
     }
+    return 0;
 }
 
 int podeAndar(int x, int y){ //retorna 0 se não pode e 1 se pode
@@ -112,9 +121,7 @@ int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
 	if(lab[x][y] != 'P' && lab[x][y] != 'S')
     	lab[x][y] = '*';
 	mostrarEstado(*mochila);
-	
-	
-	
+		
 	push(caminho, x, y);
 	
 	if(buscarSaida(x-1, y, mochila, caminho)) return 1; //para trás
@@ -126,23 +133,52 @@ int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
 	mostrarEstado(*mochila);
 
 	pop(caminho);
-    
+
     return 0;
 }
 
-void salvarCaminho(char *nomeArquivo, Pilha *caminho) {
+void salvarCaminho(char *nomeArquivo, int linhas, int colunas, char lab[][colunas], Pilha *caminho) {
     FILE *arq = fopen(nomeArquivo, "w");
 
-    for(int i = 0; i <= caminho->topo; i++) {
-        fprintf(arq, "(%d,%d)\n",
+    if (!arq) {
+        printf("Erro ao abrir arquivo!\n");
+        return;
+    }
+
+    char copia[linhas][colunas];
+	   
+    // copia labirinto
+    for (int i = 0; i < linhas; i++)
+        for (int j = 0; j < colunas; j++){
+        	 copia[i][j] = lab[i][j];
+		}
+            
+
+    // marca caminho
+    for (int i = 0; i <= caminho->topo; i++) {
+        int x = caminho->dados[i].x;
+        int y = caminho->dados[i].y;
+        
+        fprintf(arq, "(%d,%d), ", //imprime as coordenadas antes de imprimir o caminho do labirinto
             caminho->dados[i].x,
             caminho->dados[i].y);
+
+        if (copia[x][y] != 'P' && copia[x][y] != 'S')
+            copia[x][y] = '*';
+    }
+    
+    fprintf(arq, "\n"); //pula linha antes de gerar labirinto com saida 
+
+    // salva exatamente como o labirinto
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            fprintf(arq, "%c", copia[i][j]);
+        }
+        fprintf(arq, "\n");
     }
 
     fclose(arq);
 }
-
-
 
 
 

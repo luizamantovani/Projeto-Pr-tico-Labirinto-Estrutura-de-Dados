@@ -1,10 +1,10 @@
 //Guarda o caminho do personagem
 
-typedef struct Posicao {
+typedef struct {
 	int x, y;
 } Posicao;
 
-typedef struct Pilha {
+typedef struct {
 	int topo;
 	Posicao dados[1600]; //40x40
 } Pilha;

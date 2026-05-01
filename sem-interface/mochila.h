@@ -12,7 +12,3 @@ void insereMochila(Lista *p, int valor);
 void removePrimeiroMochila(Lista *p, int *p_valor);
 
 void mostrarMochila(Lista p);
-
-int calcularTotalMochila(Lista mochila);
-
-int mochilaVazia(Lista mochila);

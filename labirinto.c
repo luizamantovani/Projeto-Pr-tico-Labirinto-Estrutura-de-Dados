@@ -14,15 +14,26 @@ int ultimoValor = 0;
 
 int px, py; // posição inicial do jogador
 
-void lerArquivo(char *nomeArquivo) {
+int lerArquivo(char *nomeArquivo) {
     FILE *arq = fopen(nomeArquivo, "r");
 
     if(arq == NULL) {
         printf("Erro ao abrir arquivo\n");
+        return 1;
         exit(1);
     }
 
     fscanf(arq, "%d %d", &linhas, &colunas);
+    
+    if(linhas == 0 || colunas == 0){
+    	printf("\nArquivo em branco");
+    	return 1;
+	}
+	
+	if (linhas < 0 || colunas < 0 || linhas > 40 || colunas > 40) {
+    printf("Erro: dimensoes invalidas!\n");
+    return 0;
+	}
     fgetc(arq);
 
     for(int i = 0; i < linhas; i++) {
@@ -31,7 +42,7 @@ void lerArquivo(char *nomeArquivo) {
         }
         fgetc(arq);
     }
-
+	return 0;
     fclose(arq);
 }
 
@@ -45,7 +56,7 @@ void mostrarLabirinto() {
     }
 }
 
-void procurarPersonagem() {
+int procurarPersonagem() {
 	int i, j;
     for(i = 0; i < linhas; i++) {
         for(j = 0; j < colunas; j++) {
@@ -55,6 +66,11 @@ void procurarPersonagem() {
 			}
         }
     }
+    
+    if(px != 0 || py != 0){
+    	return 0;
+	}
+	return 1;
 }
 
 int podeAndar(int x, int y){ //retorna 0 se não pode e 1 se pode
@@ -74,7 +90,6 @@ int podeAndar(int x, int y){ //retorna 0 se não pode e 1 se pode
 }
 
 Evento processarCelula(int x, int y, Lista *mochila) {
-
     if (lab[x][y] == 'T') {
         int valor = rand() % 100 + 1;
         insereMochila(mochila, valor);
@@ -88,6 +103,9 @@ Evento processarCelula(int x, int y, Lista *mochila) {
     }
 
     if (lab[x][y] == 'A') {
+    	if(*mochila == NULL){
+		printf("A mochila está vazia!\n");
+		}
 
         if (*mochila != NULL) {
             removePrimeiroMochila(mochila, NULL);
@@ -135,9 +153,7 @@ int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
 	EndDrawing();
 
 	WaitTime(0.1);
-	
-	
-	
+		
 	push(caminho, x, y);
 	
 	if(buscarSaida(x-1, y, mochila, caminho)) return 1; //para trás

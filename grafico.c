@@ -58,6 +58,24 @@ void desenharEvento() {
     }
 }
 
+void desenharErroSemSaida(){
+	ClearBackground(RED);
+	
+	int x = colunas * TAM + 20;
+	int y = 200;
+	
+	DrawText("SEM SAIDA", x, y, 20, BLACK);
+}
+
+void desenharSemPersonagem(){
+	ClearBackground(RED);
+	
+	int x = colunas * TAM + 20;
+	int y = 200;
+	
+	DrawText("PERSONAGEM NAO ENCONTRADO", x, y, 20, BLACK);
+}
+
 void desenharLabirinto(){
 	for(int i = 0; i < linhas; i++) {
         for(int j = 0; j < colunas; j++) {
@@ -100,16 +118,24 @@ void desenharLabirinto(){
 void desenharFinalDoJogo() {
 
     const char *msg = "ENCONTROU A SAIDA!";
+	int fonte = 50;
 
+	if (colunas < 20) {
+    	fonte = 40;
+	}
+	if (colunas < 10) {
+    	fonte = 30;
+	}
     int largura = colunas * TAM;
     int altura  = linhas * TAM;
 
-    int textWidth = MeasureText(msg, 50);
+    int textWidth = MeasureText(msg, fonte);
 
     int x = (largura - textWidth) / 2;
     int y = altura / 2;
     
-    DrawText(msg, x, y, 50, GREEN);
+    
+    DrawText(msg, x, y, fonte, GREEN);
 }
 
 

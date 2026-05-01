@@ -7,9 +7,9 @@ typedef enum Evento{
     ARMADILHA
 } Evento;
 
-void lerArquivo(char *nomeArquivo);
+int lerArquivo(char *nomeArquivo);
 void mostrarLabirinto();
-void procurarPersonagem();
+int procurarPersonagem();
 int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho);
 void salvarCaminho(char *nomeArquivo, Pilha *caminho);
 

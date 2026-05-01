@@ -60,3 +60,10 @@ int calcularTotalMochila(Lista mochila) {
 
     return total;
 }
+
+int mochilaVazia(Lista mochila){
+	if(mochila==NULL){
+		return 1;
+	}
+	return 0;
+}

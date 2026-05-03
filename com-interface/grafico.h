@@ -7,6 +7,7 @@ void desenharLabirinto();
 void desenharMochila(Lista mochila);
 void desenharFinalDoJogo();
 void desenharEvento();
+void desenharLegenda();
 void desenharErroSemSaida();
 void desenharSemPersonagem();
 void finalizarJanela();

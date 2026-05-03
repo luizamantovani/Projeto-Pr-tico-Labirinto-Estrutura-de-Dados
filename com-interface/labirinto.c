@@ -9,11 +9,13 @@
 int visitado[40][40];
 int linhas, colunas;
 char lab[40][40];
+char labOriginal[40][40];
 Evento ultimoEvento = NADA;
 int ultimoValor = 0;
 
 int px, py; // posição inicial do jogador
 
+//função que lê o arquivo e retorna 1 se tiver algum erro e 0 se der certo
 int lerArquivo(char *nomeArquivo) {
     FILE *arq = fopen(nomeArquivo, "r");
 
@@ -42,20 +44,13 @@ int lerArquivo(char *nomeArquivo) {
         }
         fgetc(arq);
     }
-	return 0;
+    
     fclose(arq);
+	return 0;
+    
 }
 
-void mostrarLabirinto() {
-	int i, j;
-    for(i = 0; i < linhas; i++) {
-        for(j = 0; j < colunas; j++) {
-            printf("%c", lab[i][j]);
-        }
-        printf("\n");
-    }
-}
-
+//função que procura o personagem no labirinto e retorna 1 se encontrar e 0 se não encontrar
 int procurarPersonagem() {
 	int i, j;
     for(i = 0; i < linhas; i++) {
@@ -63,32 +58,14 @@ int procurarPersonagem() {
             if(lab[i][j] == 'P'){
             	px = i;
             	py = j;
+            	return 1;
 			}
         }
     }
-    
-    if(px != 0 || py != 0){
-    	return 0;
-	}
-	return 1;
+    return 0;
 }
 
-int podeAndar(int x, int y){ //retorna 0 se não pode e 1 se pode
-	if(x < 0 || y < 0 || x >= linhas || y >= colunas){
-		return 0;
-	}
-	
-	if(lab[x][y] == '#'){
-		return 0;
-	}
-	
-	if(visitado[x][y]){
-		return 0;
-	}
-	
-	return 1;
-}
-
+//função que verifica se a célula atual é alguma célula especial (A, S, T) e retorna o evento em questão
 Evento processarCelula(int x, int y, Lista *mochila) {
     if (lab[x][y] == 'T') {
         int valor = rand() % 100 + 1;
@@ -118,12 +95,7 @@ Evento processarCelula(int x, int y, Lista *mochila) {
     return NADA;
 }
 
-void mostrarEstado(Lista mochila) {
-    mostrarLabirinto();
-    mostrarMochila(mochila);
-}
-
-
+//função que utiliza o algoritmo de backtracking para encontrar a saída, retorna 0 se não encontrou e 1 se encontrou
 int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
 	if(x < 0 || y < 0 || x >= linhas || y >= colunas){
 		return 0;
@@ -148,6 +120,7 @@ int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
 	BeginDrawing();
 	ClearBackground(RAYWHITE);
 	desenharLabirinto();
+	desenharLegenda();
 	desenharMochila(*mochila);
 	desenharEvento();
 	EndDrawing();
@@ -167,6 +140,7 @@ int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
 	BeginDrawing();
 	ClearBackground(RAYWHITE);
 	desenharLabirinto();
+	desenharLegenda();
 	desenharMochila(*mochila);
 	desenharEvento();
 	EndDrawing();
@@ -178,13 +152,47 @@ int buscarSaida(int x, int y, Lista *mochila, Pilha *caminho){
     return 0;
 }
 
-void salvarCaminho(char *nomeArquivo, Pilha *caminho) {
+//função que salva as coordenadas do caminho e o caminho em si em um arquivo
+void salvarCaminho(char *nomeArquivo, int linhas, int colunas, char lab[][colunas], Pilha *caminho) {
     FILE *arq = fopen(nomeArquivo, "w");
 
-    for(int i = 0; i <= caminho->topo; i++) {
-        fprintf(arq, "(%d,%d)\n",
+    if (!arq) {
+        printf("Erro ao abrir arquivo!\n");
+        return;
+    }
+
+    char copia[linhas][colunas];
+	   
+    // copia labirinto
+    for (int i = 0; i < linhas; i++)
+        for (int j = 0; j < colunas; j++){
+        	 copia[i][j] = lab[i][j];
+		}
+            
+
+    // marca caminho
+    fprintf(arq, "Coordenadas para encontrar a saída: ");
+    for (int i = 0; i <= caminho->topo; i++) {
+        int x = caminho->dados[i].x;
+        int y = caminho->dados[i].y;
+
+        fprintf(arq, "(%d,%d), ", //imprime as coordenadas antes de imprimir o caminho do labirinto
             caminho->dados[i].x,
             caminho->dados[i].y);
+		
+        if (copia[x][y] != 'P' && copia[x][y] != 'S')
+            copia[x][y] = '*';
+    }
+    
+    fprintf(arq, "\n"); //pula linha antes de gerar labirinto com saida 
+
+    // salva exatamente como o labirinto
+    fprintf(arq, "Caminho: ");
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            fprintf(arq, "%c", copia[i][j]);
+        }
+        fprintf(arq, "\n");
     }
 
     fclose(arq);

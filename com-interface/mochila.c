@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include "mochila.h"
 
+//função que cria a mochila (lista)
 void criaMochila(Lista *p){
 	*p = NULL;
 }
 
+//função que insere o valor passado como parametro sempre no inicio 
 void insereMochila(Lista *p, int valor){
 	No *novo = malloc(sizeof(No));
 	novo->valor = valor;
@@ -27,6 +29,7 @@ void insereMochila(Lista *p, int valor){
 	atual->prox = novo;
 }
 
+//função que remove o primeiro elemento da função
 void removePrimeiroMochila(Lista *p, int *p_valor){
 	if(*p == NULL) return;
 
@@ -39,6 +42,7 @@ void removePrimeiroMochila(Lista *p, int *p_valor){
 	free(aux);
 }
 
+//função que mostra a mochila no terminal
 void mostrarMochila(Lista p){
     printf("\nMochila: ");
 
@@ -50,6 +54,7 @@ void mostrarMochila(Lista p){
     printf("\n");
 }
 
+//função que soma todos os elementos da mochila e retorna esse valor
 int calcularTotalMochila(Lista mochila) {
     int total = 0;
 
@@ -61,6 +66,7 @@ int calcularTotalMochila(Lista mochila) {
     return total;
 }
 
+//função que retorna 1 se a mochila estiver vazia e 0 se estiver com algum elemento
 int mochilaVazia(Lista mochila){
 	if(mochila==NULL){
 		return 1;

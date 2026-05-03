@@ -7,11 +7,13 @@
 
 #define TAM 32
 
+//função que inicia a janela
 void iniciarJanela(int largura, int altura){
-	InitWindow(colunas * 32 + 150, linhas * 32, "Labirinto 2D");
+	InitWindow(colunas * 32 + 180, linhas * 32, "Labirinto 2D");
     SetTargetFPS(60);
 }
 
+//função que desenha a mochila a partir de uma lista
 void desenharMochila(Lista mochila) {
 
     int x = colunas * TAM + 20; 
@@ -20,10 +22,9 @@ void desenharMochila(Lista mochila) {
     DrawText("Mochila:", x, y, 20, BLACK);
     y += 30;
 
-    Lista aux = mochila; // ?? salva a lista
+    Lista aux = mochila; 
 
     while(aux != NULL) {
-
         char texto[50];
         sprintf(texto, "%d", aux->valor);
 
@@ -42,6 +43,7 @@ void desenharMochila(Lista mochila) {
     
 }
 
+//função que desenha o ultimo evento que ocorreu (tesouro ou armadilha)
 void desenharEvento() {
 
     int x = colunas * TAM + 20;
@@ -58,6 +60,23 @@ void desenharEvento() {
     }
 }
 
+//função que desenha a legenda do jogo
+void desenharLegenda() {
+    int x = colunas * TAM + 10;
+    int y = 300;
+
+	if (colunas < 20) {
+    	y = 250;
+	}
+
+    DrawText("Legenda:", x, y, 20, BLACK);
+    DrawText("Verde: Personagem", x, y + 30, 15, GREEN);
+    DrawText("Amarelo: Tesouro", x, y + 50, 15, GOLD);
+    DrawText("Vermelho: Armadilha", x, y + 70, 15, RED);
+    DrawText("Azul: Saida", x, y + 90, 15, BLUE);
+}
+
+//função que desenha um erro caso o labirinto não tenha saida
 void desenharErroSemSaida(){
 	ClearBackground(RED);
 	
@@ -67,15 +86,18 @@ void desenharErroSemSaida(){
 	DrawText("SEM SAIDA", x, y, 20, BLACK);
 }
 
+//função que desenha erro se não tiver personagem no labirinto
 void desenharSemPersonagem(){
 	ClearBackground(RED);
 	
-	int x = colunas * TAM + 20;
+	int x = colunas * TAM + 5;
 	int y = 200;
 	
-	DrawText("PERSONAGEM NAO ENCONTRADO", x, y, 20, BLACK);
+	DrawText("SEM ", x, y, 20, BLACK);
+	DrawText("PERSONAGEM", x, y + 15, 20, BLACK);
 }
 
+//função que desenha o labirinto
 void desenharLabirinto(){
 	for(int i = 0; i < linhas; i++) {
         for(int j = 0; j < colunas; j++) {
@@ -115,6 +137,7 @@ void desenharLabirinto(){
     }
 }
 
+//função que desenha a mensagem de encontrar a saida assim que a saida for encontrada
 void desenharFinalDoJogo() {
 
     const char *msg = "ENCONTROU A SAIDA!";
@@ -123,23 +146,22 @@ void desenharFinalDoJogo() {
 	if (colunas < 20) {
     	fonte = 40;
 	}
-	if (colunas < 10) {
-    	fonte = 30;
+	if (colunas < 15) {
+    	fonte = 20;
 	}
     int largura = colunas * TAM;
     int altura  = linhas * TAM;
 
     int textWidth = MeasureText(msg, fonte);
 
-    int x = (largura - textWidth) / 2;
+    int x = ((largura - textWidth) / 2);
     int y = altura / 2;
     
     
     DrawText(msg, x, y, fonte, GREEN);
 }
 
-
-
+//função que finaliza a janela do jogo
 void finalizarJanela(){
 	CloseWindow();
 }

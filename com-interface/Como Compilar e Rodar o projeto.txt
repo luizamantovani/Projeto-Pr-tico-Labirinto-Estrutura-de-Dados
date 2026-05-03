@@ -1,0 +1,123 @@
+# 📦 Instalação e uso da Raylib (Windows com GCC)
+
+Este guia mostra como configurar o ambiente para usar a biblioteca **raylib** no Windows, utilizando GCC (via w64devkit) e rodando tudo pelo terminal padrão (CMD ou PowerShell).
+
+---
+
+Se não quiser compilar o código, pode apenas clicar no arquivo jogo.exe, garanta apenas que existe um arquivo labirinto.txt na mesma pasta do jogo.exe
+
+# 🚀 1. Instalar o compilador (GCC)
+
+## 🔽 Baixar o w64devkit
+
+1. Acesse: https://github.com/skeeto/w64devkit/releases
+2. Baixe o arquivo:
+
+   ```
+   w64devkit-x64-*.7z.exe
+   ```
+
+## 📁 Extrair
+
+* Execute o arquivo baixado
+* Extraia para:
+
+  ```
+  C:\w64devkit
+  ```
+
+## ⚙️ Adicionar ao PATH
+
+1. Pressione `Win + S` e pesquise: **variáveis de ambiente**
+2. Clique em **Editar variáveis de ambiente do sistema**
+3. Clique em **Variáveis de Ambiente**
+4. Em "Path", clique em **Editar**
+5. Adicione:
+   C:\w64devkit\bin
+   
+6. Salve tudo
+
+## 🧪 Testar
+
+Abra o terminal e execute:
+gcc --version
+
+Se aparecer a versão do GCC → ✔ tudo certo
+
+---
+
+# 🎮 2. Baixar a Raylib
+
+## 🔽 Download
+
+1. Acesse: https://github.com/raysan5/raylib/releases
+2. Baixe o arquivo:
+
+   ```
+   raylib-*_win64_mingw-w64.zip
+   ```
+
+## 📁 Extrair
+
+Extraia para:
+
+```
+C:\raylib
+```
+
+## ✔ Verificar
+
+Confirme se existem os arquivos:
+
+```
+C:\raylib\include\raylib.h
+C:\raylib\lib\libraylib.a
+```
+
+
+# ⚙️ 3. Compilar o código
+
+Compile com:
+
+gcc main.c grafico.c labirinto.c mochila.c pilha.c -o jogo.exe -IC:\raylib\include -LC:\raylib\lib -lraylib -lgdi32 -lwinmm
+
+ou
+
+Utilize o arquivo build.bat
+
+# ▶️ 4. Executar
+jogo.exe
+
+
+# ⚠️ Problemas comuns
+
+❌ gcc não reconhecido
+
+* Verifique se o PATH está configurado corretamente
+
+❌ raylib.h não encontrado
+
+* Verifique o caminho:
+
+
+  -IC:\raylib\include
+ 
+
+❌ erro de linking
+
+* Certifique-se de usar:
+
+
+  -lraylib -lopengl32 -lgdi32 -lwinmm
+
+
+---
+
+# 🧠 Resumo
+
+1. Instalar GCC (w64devkit)
+2. Baixar e extrair raylib
+3. Compilar com gcc
+4. Executar
+
+---
